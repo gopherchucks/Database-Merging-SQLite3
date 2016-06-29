@@ -55,7 +55,8 @@ def getColumnNames( tableName ):
     temp = curs.fetchall()
     columns = []
     for i in range(0, len(temp)):
-        if ((("id" in temp[i][1]) | ("ID" in temp[i][1])) & ("INTEGER" in temp[i][2])):
+        if ((("id" in temp[i][1]) | ("ID" in temp[i][1])) & ( \
+            "INTEGER" in temp[i][2])):
             continue
         else:
             columns.append(temp[i][1])
@@ -65,7 +66,7 @@ def getColumnNames( tableName ):
 #
 # @param list1 the first list parameter for comparison
 # @param list2 the second list parameter for comparison
-# @return will return a boolean (0 if lists are not the same, 1 if lists are the same)     
+# @return will return a boolean (0 lists !=, 1 lists ==)     
 def compareLists(list1, list2):
     if len(list1) != len(list2):
         return 0
@@ -74,6 +75,19 @@ def compareLists(list1, list2):
             if list1[i] != list2[i]:
                 return 0
     return 1
+
+# Merges a table from an attached database to the source table
+#
+# @param tableName the name of the table to merge
+# @param columnNames the names of the columns to include in the merge
+# @param dbNameTableName the name of the attached database and the table
+#                        i.e. "databaseName.tableName"
+# @return none
+def mergeTable(tableName, columnNames, dbNameTableName):
+    curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
+                 (tableName, columnNames, columnNames, dbNameTableName))
+    conn.commit()
+    
 
 ############################## Merge Script ####################################
 ################################################################################
