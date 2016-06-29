@@ -38,17 +38,25 @@ def closeConnection():
 #
 # @param dbName the name of the database file (i.e. "example.db")
 # @return a string array of the table names
-def getTableNames( dbName ):
+def getTableNames():
     curs.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = curs.fetchall()
+    temp = curs.fetchall()
+    tables = []
+    for i in range(0, len(temp)):
+        tables.append(temp[i][0])
     return tables
 
 # Gets the column names of a table
 #
 # @param dbName the name of the database file (i.e. "example.db")
 # @return a string array of the table names and their respective column names
-def getColumnNames( dbName, table ):
-    curs.execute("PRAGMA table_info(%s);" % str(tables[0][0])
+def getColumnNames( tableName ):
+    curs.execute("PRAGMA table_info(%s);" % str(tableName))
+    temp = curs.fetchall()
+    columns = []
+    for i in range(0, len(temp)):
+        columns.append(temp[i][1])
+    return columns
     
 
 ############################## Merge Script ####################################
