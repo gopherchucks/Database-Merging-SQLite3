@@ -10,11 +10,13 @@
 ################################################################################
 
 import sqlite3
+import time
+import datetime
 
 ############################ Global Variables ##################################
 ################################################################################
 
-dbCount = 1                # Variable to count the number of databases
+dbCount = 0                # Variable to count the number of databases
 
 ############################ Function Definitions ##############################
 ################################################################################
@@ -49,7 +51,7 @@ def getTableNames():
 # Gets the column names of a table
 #
 # @param dbName the name of the database file (i.e. "example.db")
-# @return a string array of the column names - strips primary ids  
+# @return a string array of the column names - strips primary ids
 def getColumnNames( tableName ):
     curs.execute("PRAGMA table_info(%s);" % str(tableName))
     temp = curs.fetchall()
@@ -66,7 +68,7 @@ def getColumnNames( tableName ):
 #
 # @param list1 the first list parameter for comparison
 # @param list2 the second list parameter for comparison
-# @return will return a boolean (0 lists !=, 1 lists ==)     
+# @return will return a boolean (0 lists !=, 1 lists ==)
 def compareLists(list1, list2):
     if len(list1) != len(list2):
         return 0
@@ -87,9 +89,9 @@ def mergeTable(tableName, columnNames, dbNameTableName):
     curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
                  (tableName, columnNames, columnNames, dbNameTableName))
     conn.commit()
-    
 
-############################## Merge Script ####################################
+
+############################## Input Parameters ################################
 ################################################################################
 
 # Create the initial database connection - everything will be merged to here
@@ -97,8 +99,16 @@ conn = sqlite3.connect('') # Enter the name of the database
 curs = conn.cursor()       # Creates a cursor for use on the database
 
 # Attach databases
-
 attachDatabase('')         # Enter the name of the database (i.e. "example.db")
 attachDatabase('')
 attachDatabase('')
 attachDatabase('')
+
+############################## Merge Script ####################################
+################################################################################
+
+# Compare databases
+
+# Merge databases
+print("Merging databases. Started at: " + time.time())
+print("Databases finished merging. Time elapsed: ")
