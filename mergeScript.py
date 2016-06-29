@@ -3,7 +3,7 @@
 #                                                                              #
 # @author         Charles Duso                                                 #
 # @description    Merges databases that have the same tables and schema.       #
-# @date           June 28th, 2016                                               #
+# @date           June 28th, 2016                                              #
 ################################################################################
 
 ############################# Import Libraries #################################
@@ -41,13 +41,15 @@ def closeConnection():
 def getTableNames( dbName ):
     curs.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = curs.fetchall()
+    return tables
 
 # Gets the column names of a table
 #
 # @param dbName the name of the database file (i.e. "example.db")
 # @return a string array of the table names and their respective column names
-def getColumnNames( dbName ):
-
+def getColumnNames( dbName, table ):
+    curs.execute("PRAGMA table_info(%s);" % str(tables[0][0])
+    
 
 ############################## Merge Script ####################################
 ################################################################################
