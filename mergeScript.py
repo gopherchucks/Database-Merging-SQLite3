@@ -3,7 +3,7 @@
 #                                                                              #
 # @author         Charles Duso                                                 #
 # @description    Merges databases that have the same tables and schema.       #
-# @date           June 28th, 2016                                              #
+# @date           June 29th, 2016                                              #
 ################################################################################
 
 ############################# Import Libraries #################################
@@ -11,12 +11,16 @@
 
 import sqlite3
 import time
-import datetime
+from time import gmtime, strftime
 
 ############################ Global Variables ##################################
 ################################################################################
 
-dbCount = 0                # Variable to count the number of databases
+global dbCount                 # Variable to count the number of databases
+dbCount = 0
+
+global listDB                  # Variable to store the names of the databases
+listDB = []
 
 ############################ Function Definitions ##############################
 ################################################################################
@@ -27,7 +31,8 @@ dbCount = 0                # Variable to count the number of databases
 # @return none
 def attachDatabase( dbName ):
     curs.execute("ATTACH DATABASE ? as ? ;", (dbName, 'db' + str(dbCount)))
-    dbCount++
+    global dbCount
+    dbCount += 1
 
 # Closes the current database connection
 #
@@ -69,7 +74,7 @@ def getColumnNames( tableName ):
 # @param list1 the first list parameter for comparison
 # @param list2 the second list parameter for comparison
 # @return will return a boolean (0 lists !=, 1 lists ==)
-def compareLists(list1, list2):
+def compareLists( list1, list2 ):
     if len(list1) != len(list2):
         return 0
     else:
@@ -78,6 +83,16 @@ def compareLists(list1, list2):
                 return 0
     return 1
 
+# Converts a list to a string of comma separated items
+#
+# @param listObj the list to convert
+# @return a string containing the list items - separated
+#         by commas.
+def listToString( listObj ):
+    listString = ""
+    for i in range(0, len(listObj)):
+    return listString
+
 # Merges a table from an attached database to the source table
 #
 # @param tableName the name of the table to merge
@@ -85,7 +100,7 @@ def compareLists(list1, list2):
 # @param dbNameTableName the name of the attached database and the table
 #                        i.e. "databaseName.tableName"
 # @return none
-def mergeTable(tableName, columnNames, dbNameTableName):
+def mergeTable( tableName, columnNames, dbNameTableName ):
     curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
                  (tableName, columnNames, columnNames, dbNameTableName))
     conn.commit()
@@ -95,20 +110,37 @@ def mergeTable(tableName, columnNames, dbNameTableName):
 ################################################################################
 
 # Create the initial database connection - everything will be merged to here
-conn = sqlite3.connect('') # Enter the name of the database
-curs = conn.cursor()       # Creates a cursor for use on the database
+conn = sqlite3.connect('testDB_1.db') # Enter the name of the database
+curs = conn.cursor()                # Creates a cursor for use on the database
 
 # Attach databases
-attachDatabase('')         # Enter the name of the database (i.e. "example.db")
-attachDatabase('')
-attachDatabase('')
-attachDatabase('')
+attachDatabase('testDB_2.db')       # Enter the name of the database
+                                    # (i.e. "example.db")
+#attachDatabase('')
+#attachDatabase('')
+#attachDatabase('')
 
 ############################## Merge Script ####################################
 ################################################################################
 
 # Compare databases
+startTime = time.time()
+print("Comparing databases. Started at: " + strftime("%H:%M", gmtime()))
+#
+#
+#
+print("Finished comparing databases. Time elapsed: %.3f" % (time.time() - 
+                                                            startTime))
 
 # Merge databases
-print("Merging databases. Started at: " + time.time())
-print("Databases finished merging. Time elapsed: ")
+startTime = time.time()
+print("Merging databases. Started at: " + strftime("%H:%M", gmtime()))
+#
+#
+#
+conn.commit()
+closeConnection()
+print("Databases finished merging. Time elapsed: %.3f" % (time.time() -
+                                                        startTime))
+
+
