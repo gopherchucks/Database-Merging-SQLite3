@@ -16,11 +16,8 @@ from time import gmtime, strftime
 ############################ Global Variables ##################################
 ################################################################################
 
-global dbCount                 # Variable to count the number of databases
-dbCount = 0
-
-global listDB                  # Variable to store the names of the databases
-listDB = []
+dbCount = 0                    # Variable to count the number of databases                
+listDB = []                    # Variable to store the names of the databases
 
 ############################ Function Definitions ##############################
 ################################################################################
@@ -30,8 +27,11 @@ listDB = []
 # @param dbName the name of the database file (i.e. "example.db")
 # @return none
 def attachDatabase( dbName ):
-    curs.execute("ATTACH DATABASE ? as ? ;", (dbName, 'db' + str(dbCount)))
     global dbCount
+    global listDB
+    print(("Attaching database: %s") % dbName)
+    curs.execute("ATTACH DATABASE ? as ? ;", (dbName, 'db' + str(dbCount)))
+    listDB.append('db' + str(dbCount))
     dbCount += 1
 
 # Closes the current database connection
@@ -56,7 +56,7 @@ def getTableNames():
 # Gets the column names of a table
 #
 # @param dbName the name of the database file (i.e. "example.db")
-# @return a string array of the column names - strips primary ids
+# @return a string array of the column names - strips primary ids column
 def getColumnNames( tableName ):
     curs.execute("PRAGMA table_info(%s);" % str(tableName))
     temp = curs.fetchall()
@@ -83,7 +83,7 @@ def compareLists( list1, list2 ):
                 return 0
     return 1
 
-# Converts a list to a string of comma separated items
+# Converts a list of string objects to a string of comma separated items.
 #
 # @param listObj the list to convert
 # @return a string containing the list items - separated
@@ -91,6 +91,10 @@ def compareLists( list1, list2 ):
 def listToString( listObj ):
     listString = ""
     for i in range(0, len(listObj)):
+        if (i == (len(listObj) - 1)):
+            listString = listString + listObj[i]
+        else:
+            listString = listString + listObj[i] + ", "
     return listString
 
 # Merges a table from an attached database to the source table
@@ -100,7 +104,8 @@ def listToString( listObj ):
 # @param dbNameTableName the name of the attached database and the table
 #                        i.e. "databaseName.tableName"
 # @return none
-def mergeTable( tableName, columnNames, dbNameTableName ):
+def mergeTable( tableName, columnNames, dbName ):
+    dbNameTableName = dbName + "." + tableName
     curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
                  (tableName, columnNames, columnNames, dbNameTableName))
     conn.commit()
