@@ -11,13 +11,15 @@
 
 import sqlite3
 import time
+import sys
 from time import gmtime, strftime
 
 ############################ Global Variables ##################################
 ################################################################################
 
-dbCount = 0                    # Variable to count the number of databases                
+dbCount = 0                    # Variable to count the number of databases
 listDB = []                    # Variable to store the names of the databases
+listTable = []                 # Variable to store table names
 
 ############################ Function Definitions ##############################
 ################################################################################
@@ -114,38 +116,74 @@ def mergeTable( tableName, columnNames, dbName ):
 ############################## Input Parameters ################################
 ################################################################################
 
-# Create the initial database connection - everything will be merged to here
-conn = sqlite3.connect('testDB_1.db') # Enter the name of the database
-curs = conn.cursor()                # Creates a cursor for use on the database
+mainDB = 'testDB_1.db'               # This is where the main database is
+                                     # referenced. Where all items will be
+                                     # merged to.
 
-# Attach databases
-attachDatabase('testDB_2.db')       # Enter the name of the database
-                                    # (i.e. "example.db")
-#attachDatabase('')
-#attachDatabase('')
-#attachDatabase('')
+otherDBs = ['testDB_2.db']       # This is the list of the other databases.
+if (len(otherDBs) == 0):
+    print("ERROR: No databases have been added for merging.")
+    sys.exit()
 
 ############################## Merge Script ####################################
 ################################################################################
 
+# Initialize Connection and get main list of tables
+conn = sqlite3.connect(mainDB)       # Connect to the main database
+curs = conn.cursor()                 # Connect a cursor
+listTable = getTableNames()          # Get the table names
+closeConnection()
+
 # Compare databases
 startTime = time.time()
 print("Comparing databases. Started at: " + strftime("%H:%M", gmtime()))
-#
-#
-#
-print("Finished comparing databases. Time elapsed: %.3f" % (time.time() - 
+
+for i in range(0, len(otherDBs)):
+    conn = sqlite3.connect(otherDBs[i])
+    curs = conn.cursor()
+    temp = getTableNames()              # Get the current list of tables
+    if (len(listTable) > len(temp)):
+        print("Table is missing from non-primary database: %s" % otherDBs[i])
+        print("Database will NOT BE MERGED with the main database.")
+        otherDBs.remove(otherDBs[i])    # Remove the table to avoid errors
+        continue
+
+    if (len(listTable) < len(temp)):
+        print("Extra table(s) in non-primary database: %s" % otherDBs[i])
+        print("TABLES that are NOT in main database will NOT be added.")
+
+    if (listTable != temp):
+        print("Tables do not match in non-primary database: %s" % otherDBs[i])
+        print("The database will NOT BE MERGED with the main database.")
+        otherDBs.remove(otherDBs[i])    # Remove the table to avoid errors
+        continue
+
+    closeConnection()
+
+if (len(otherDBs) == 0):
+    print("ERROR: No databases to merge. Databases were either removed due to \
+          inconsistencies, or databases were not added properly.")
+    sys.exit()
+
+print("Finished comparing databases. Time elapsed: %.3f" % (time.time() -
                                                             startTime))
 
-# Merge databases
+# Attach databases
 startTime = time.time()
 print("Merging databases. Started at: " + strftime("%H:%M", gmtime()))
-#
-#
-#
-conn.commit()
-closeConnection()
+
+conn = sqlite3.connect(mainDB)      # Attach main database
+curs = conn.cursor()                # Attach cursor
+for i in range(0, len(otherDBs)):
+    attachDatabase(otherDBs[i])     # Attach other databases
+
+
+# Merge databases
+#for i in range(0, len(listDB)):
+
+
+
+conn.commit()                       # Commit changes
+closeConnection()                   # Close connection
 print("Databases finished merging. Time elapsed: %.3f" % (time.time() -
                                                         startTime))
-
-
