@@ -108,19 +108,22 @@ def listToString( listObj ):
 # @return none
 def mergeTable( tableName, columnNames, dbName ):
     dbNameTableName = dbName + "." + tableName
-    curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
-                 (tableName, columnNames, columnNames, dbNameTableName))
-    conn.commit()
+    try:
+        curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
+                     (tableName, columnNames, columnNames, dbNameTableName))
+        conn.commit()
+    except:
+        pass
 
 
 ############################## Input Parameters ################################
 ################################################################################
 
-mainDB = 'testDB_1.db'               # This is where the main database is
+mainDB = 'dbTables.sqlite3'               # This is where the main database is
                                      # referenced. Where all items will be
                                      # merged to.
 
-otherDBs = ['testDB_2.db']           # This is the list of the other databases.
+otherDBs = ['dbTables2.sqlite3']           # This is the list of the other databases.
 if (len(otherDBs) == 0):
     print("ERROR: No databases have been added for merging.")
     sys.exit()
@@ -183,7 +186,6 @@ for i in range(0, len(listDB)):
     for j in range(0, len(listTable)):
         columns = listToString(getColumnNames(listTable[j])) # get columns
         mergeTable(listTable[j], columns, listDB[i])
-
 
 conn.commit()                       # Commit changes
 closeConnection()                   # Close connection
