@@ -119,11 +119,11 @@ def mergeTable( tableName, columnNames, dbName ):
 ############################## Input Parameters ################################
 ################################################################################
 
-mainDB = 'dbTables.sqlite3'               # This is where the main database is
+mainDB = ''               # This is where the main database is
                                      # referenced. Where all items will be
                                      # merged to.
 
-otherDBs = ['dbTables2.sqlite3']           # This is the list of the other databases.
+otherDBs = ['']           # This is the list of the other databases.
 if (len(otherDBs) == 0):
     print("ERROR: No databases have been added for merging.")
     sys.exit()
