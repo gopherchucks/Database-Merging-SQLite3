@@ -3,7 +3,7 @@
 #                                                                              #
 # @author         Charles Duso                                                 #
 # @description    Merges databases that have the same tables and schema.       #
-# @date           June 29th, 2016                                              #
+# @date           August 7th, 2016                                              #
 ################################################################################
 
 ############################# Import Libraries #################################
@@ -64,8 +64,7 @@ def getColumnNames( tableName ):
     temp = curs.fetchall()
     columns = []
     for i in range(0, len(temp)):
-        if ((("id" in temp[i][1]) | ("ID" in temp[i][1])) & ( \
-            "INTEGER" in temp[i][2])):
+        if (("id" in temp[i][1]) | ("ID" in temp[i][1])):
             continue
         else:
             columns.append(temp[i][1])
@@ -110,7 +109,7 @@ def mergeTable( tableName, columnNames, dbName ):
     dbNameTableName = dbName + "." + tableName
     try:
         curs.execute("INSERT INTO %s (%s) SELECT %s FROM %s;" %
-                     (tableName, columnNames, columnNames, dbNameTableName))
+                        (tableName, columnNames, columnNames, dbNameTableName))
         conn.commit()
     except:
         pass
@@ -119,11 +118,12 @@ def mergeTable( tableName, columnNames, dbName ):
 ############################## Input Parameters ################################
 ################################################################################
 
-mainDB = ''               # This is where the main database is
+mainDB = ''     # This is where the main database is
                                      # referenced. Where all items will be
                                      # merged to.
 
-otherDBs = ['']           # This is the list of the other databases.
+otherDBs = []
+
 if (len(otherDBs) == 0):
     print("ERROR: No databases have been added for merging.")
     sys.exit()
@@ -177,9 +177,9 @@ print("Merging databases. Started at: " + strftime("%H:%M", gmtime()))
 
 conn = sqlite3.connect(mainDB)      # Attach main database
 curs = conn.cursor()                # Attach cursor
+
 for i in range(0, len(otherDBs)):
     attachDatabase(otherDBs[i])     # Attach other databases
-
 
 # Merge databases
 for i in range(0, len(listDB)):
