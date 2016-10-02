@@ -3,7 +3,7 @@
 #                                                                              #
 # @author         Charles Duso                                                 #
 # @description    Merges databases that have the same tables and schema.       #
-# @date           August 7th, 2016                                              #
+# @date           August 7th, 2016                                             #
 ################################################################################
 
 ############################# Import Libraries #################################
