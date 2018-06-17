@@ -1,8 +1,6 @@
 SQLite3 Database Merge Script
 ================================
 
-[![Shippable](https://img.shields.io/shippable/5444c5ecb904a4b21567b0ff.svg?maxAge=2592000)](https://github.com/charlieduso/CS430_Project2-Raycaster#usage)
-
 
 
 
