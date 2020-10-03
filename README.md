@@ -35,4 +35,4 @@ Requirements
 Authors
 =======
 
-* Charles Duso
+* gopherchucks
